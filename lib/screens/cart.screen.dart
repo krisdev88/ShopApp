@@ -77,6 +77,7 @@ class OrderButton extends StatefulWidget {
 }
 
 class _OrderButtonState extends State<OrderButton> {
+  // TODO smierdzi xd
   var _isLoading = false;
 
   @override
@@ -86,6 +87,7 @@ class _OrderButtonState extends State<OrderButton> {
       onPressed: (widget.cart.totalAmount <= 0 || _isLoading)
           ? null
           : () async {
+            // TODO arrow my friend :)
               setState(() {
                 _isLoading = true;
               });

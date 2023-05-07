@@ -10,6 +10,7 @@ class OrdersScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // TODO printy w gotowej apce do wyjebania
     print('building orders');
     // final orderData = Provider.of<Orders>(context);
     return Scaffold(

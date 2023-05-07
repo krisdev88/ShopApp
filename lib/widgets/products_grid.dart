@@ -18,6 +18,7 @@ class ProductsGrid extends StatelessWidget {
       itemBuilder: (ctx, i) => ChangeNotifierProvider.value(
         // create: (c) => products[i],
         value: products[i],
+        // TODO pusty item jest sens tworzyc?
         child: ProductItem(
             // products[i].id,
             // products[i].title,

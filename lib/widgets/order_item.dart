@@ -15,6 +15,7 @@ class OrderItem extends StatefulWidget {
 }
 
 class _OrderItemState extends State<OrderItem> {
+  // TODO smrod
   var _expanded = false;
 
   @override

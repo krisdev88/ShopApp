@@ -17,6 +17,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
   final _imageUrlController = TextEditingController();
   final _imageUrlFocusNode = FocusNode();
   final _form = GlobalKey<FormState>();
+  // TODO smrod *4
   var _editedProduct = Product(
     id: null,
     title: '',
@@ -71,6 +72,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
   }
 
   void _updateImageUrl() {
+    // TODO to jest bardzo nieczytelne, przemysl to czy nie ma lepszego sposobu
     if (!_imageUrlFocusNode.hasFocus) {
       if ((!_imageUrlController.text.startsWith('http') &&
               !_imageUrlController.text.startsWith('htpps')) ||
@@ -89,6 +91,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
       return;
     }
     _form.currentState.save();
+    // TODO arrow
     setState(() {
       _isLoading = true;
     });
@@ -113,6 +116,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
             content: Text('Something went wrong!'),
             actions: <Widget>[
               TextButton(
+                // TODO arrow
                   onPressed: () {
                     Navigator.of(ctx).pop();
                   },
@@ -128,6 +132,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
       //   Navigator.of(context).pop();
       // }
     }
+    // TODO arrow
     setState(() {
       _isLoading = false;
     });
@@ -160,10 +165,12 @@ class _EditProductScreenState extends State<EditProductScreen> {
                       initialValue: _initValues['title'],
                       decoration: const InputDecoration(labelText: 'Title'),
                       textInputAction: TextInputAction.next,
+                      // TODO arrow
                       onFieldSubmitted: (_) {
                         FocusScope.of(context).requestFocus(_priceFocusNode);
                       },
                       onSaved: (value) {
+                        // TODO tworzysz nowa instancje by zmienic tytul, duzo lepiej zmienic na istniejacej instacji editedProduct
                         _editedProduct = Product(
                           title: value,
                           price: _editedProduct.price,
@@ -174,6 +181,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
                         );
                       },
                       validator: (value) {
+                        // TODO inline to misiu pisz :) niepotrzebnie kod sie rozwleka przez to i brak funkcj strzalkowych
                         if (value.isEmpty) {
                           return 'Please provide a value.';
                         }
@@ -186,11 +194,13 @@ class _EditProductScreenState extends State<EditProductScreen> {
                       textInputAction: TextInputAction.next,
                       keyboardType: TextInputType.number,
                       focusNode: _priceFocusNode,
+                      // TODO arrow
                       onFieldSubmitted: (_) {
                         FocusScope.of(context)
                             .requestFocus(_descriptionFocuseNode);
                       },
                       onSaved: (value) {
+                        // TODO jak wyzej, tym razem tworzyc nowa instancje by zmienic cene
                         _editedProduct = Product(
                           title: _editedProduct.title,
                           price: double.parse(value),
@@ -201,6 +211,9 @@ class _EditProductScreenState extends State<EditProductScreen> {
                         );
                       },
                       validator: (value) {
+                        // TODO w takich przypadkach tez bym raczej enuma zrobil i tam trzymal wszystkie mozliwe opisy bledow, 
+                        // czyli robisz enum priceErrors i robisz mape wartosci np 'EMPTY' = 'Please enter a price"
+                        // Duzo czytelniejeszy kod wtedy jest, latwiej edytowalny i bardziej spojny
                         if (value.isEmpty) {
                           return 'Pleace enter a price.';
                         }
@@ -230,6 +243,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
                         return null;
                       },
                       onSaved: (value) {
+                        // TODO niepotrzebnie tworzona instancja
                         _editedProduct = Product(
                           title: _editedProduct.title,
                           price: _editedProduct.price,
@@ -274,6 +288,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
                             textInputAction: TextInputAction.done,
                             controller: _imageUrlController,
                             focusNode: _imageUrlFocusNode,
+                            // TODO =>
                             onFieldSubmitted: (_) {
                               _saveForm();
                             },
@@ -281,6 +296,8 @@ class _EditProductScreenState extends State<EditProductScreen> {
                               if (value.isEmpty) {
                                 return 'Please enter an image URL.';
                               }
+                              // TODO tu juz jest duzo duzo ladniej niz chwile wczesniej :D moze warto to przekopiowac w tamto miesjce? 
+                              // A skoro mozesz przekopiowac to moze od razu warto napisac medote zeby nie powtarzac dwa razy kodu?
                               if (!value.startsWith('http') &&
                                   !value.startsWith('htpps')) {
                                 return 'Please enter a valid Url.';
@@ -293,6 +310,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
                               return null;
                             },
                             onSaved: (value) {
+                              // TODO zbedna nowa instancja
                               _editedProduct = Product(
                                 title: _editedProduct.title,
                                 price: _editedProduct.price,
@@ -313,3 +331,12 @@ class _EditProductScreenState extends State<EditProductScreen> {
     );
   }
 }
+
+
+
+if(dupa){
+  return cycki
+}
+return chuj
+
+return dupa ? cycki : chuj

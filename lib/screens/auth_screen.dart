@@ -243,6 +243,7 @@ class _AuthCardState extends State<AuthCard>
                   decoration: InputDecoration(labelText: 'E-Mail'),
                   keyboardType: TextInputType.emailAddress,
                   validator: (value) {
+                    // TODO do walidacji uzywaj Regexa
                     if (value.isEmpty || !value.contains('@')) {
                       return 'Invalid email!';
                     }
@@ -258,6 +259,7 @@ class _AuthCardState extends State<AuthCard>
                   obscureText: true,
                   controller: _passwordController,
                   validator: (value) {
+                    // TODO rowniez tutaj regex bylby spoko
                     if (value.isEmpty || value.length < 5) {
                       return 'Password is too short!';
                     }

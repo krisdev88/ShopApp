@@ -19,6 +19,7 @@ class ProductsOverviewScreen extends StatefulWidget {
 }
 
 class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
+  // TODO smierdzi
   var _showOnlyFavorites = false;
   var _inInit = true;
   var _isLoading = false;
@@ -35,6 +36,7 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
 
   @override
   void didChangeDependencies() {
+    // TODO arrow
     if (_inInit) {
       setState(() {
         _isLoading = true;
