@@ -6,6 +6,7 @@ class CartItem {
   final int quantity;
   final double price;
 
+  // TODO poczytaj o roznicy miedzy @required a required https://stackoverflow.com/questions/67642000/what-is-the-difference-between-required-and-required-in-flutter-what-is-the-di
   CartItem({
     @required this.id,
     @required this.title,
@@ -26,7 +27,9 @@ class Cart with ChangeNotifier {
   }
 
   double get totalAmount {
+    // TODO var smierdzi uzyj double xd
     var total = 0.0;
+    // TODO arrow func
     _items.forEach((key, cartItem) {
       total += cartItem.price * cartItem.quantity;
     });
@@ -68,6 +71,7 @@ class Cart with ChangeNotifier {
       return;
     }
     if (_items[productId].quantity > 1) {
+      // TODO tworzenie nowej instancji CartItem zeby zmienic ilosc nie jeste dobrym pomyslem :) postaraj sie zmienic te wartosc w istniejacym obiekcie, oszczedzaj pamiec uzytkownikow :D
       _items.update(
           productId,
           (existingCartItem) => CartItem(

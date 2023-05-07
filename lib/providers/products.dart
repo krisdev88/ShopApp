@@ -7,6 +7,7 @@ import './product.dart';
 import '../models/http_exception.dart';
 
 class Products with ChangeNotifier {
+  // TODO smieciowe komentarze usuwamy 
   List<Product> _items = [
     // Product(
     //   id: 'p1',
@@ -47,7 +48,7 @@ class Products with ChangeNotifier {
   final String userId;
 
   Products(this.authToken, this.userId, this._items);
-
+  // TODO arrow func w 3 nizej
   List<Product> get items {
     // if (_showFavoritesOnly) {
     //   return _items.where((prodItem) => prodItem.isFavorite).toList();
@@ -76,6 +77,9 @@ class Products with ChangeNotifier {
   Future<void> fetchAndSetProducts([bool filterByUser = false]) async {
     final filterString =
         filterByUser ? 'orderBy="creatorId"&equalTo="$userId"' : '';
+    // TODO doklej ten & do tego wyzej :) Bo tak na koncu linku zawsze zostaje
+    // TODO var smierdzi 
+    // TODO podstawowy url do consta i na gore
     var url = Uri.parse(
         'https://flutter-update-43996-default-rtdb.europe-west1.firebasedatabase.app/products.json?auth=$authToken&$filterString');
     try {
@@ -108,6 +112,7 @@ class Products with ChangeNotifier {
   }
 
   Future<void> addProduct(Product product) async {
+    // TODO again
     final url = Uri.parse(
         'https://flutter-update-43996-default-rtdb.europe-west1.firebasedatabase.app/products.json?auth=$authToken');
     try {
@@ -140,6 +145,7 @@ class Products with ChangeNotifier {
   Future<void> updateProduct(String id, Product newProduct) async {
     final prodIndex = _items.indexWhere((prod) => prod.id == id);
     if (prodIndex >= 0) {
+      // TODO one more
       final url = Uri.parse(
           'https://flutter-update-43996-default-rtdb.europe-west1.firebasedatabase.app/products/$id.json?auth=$authToken');
       await http.patch(url,
@@ -157,12 +163,15 @@ class Products with ChangeNotifier {
   }
 
   Future<void> deleteProduct(String id) async {
+    // TODO another shit
     final url = Uri.parse(
         'https://flutter-update-43996-default-rtdb.europe-west1.firebasedatabase.app/products/$id.json?auth=$authToken');
     final existingProductIndex = _items.indexWhere((prod) => prod.id == id);
+    // TOOD var smierdiz
     var existingProduct = _items[existingProductIndex];
     _items.removeAt(existingProductIndex);
     notifyListeners();
+    
     final response = await http.delete(url);
     if (response.statusCode >= 400) {
       _items.insert(existingProductIndex, existingProduct);

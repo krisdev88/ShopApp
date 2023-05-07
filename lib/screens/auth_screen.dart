@@ -14,6 +14,7 @@ class AuthScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final deviceSize = MediaQuery.of(context).size;
+    // TODO smieciowe komentarze
     // final transformConfig = Matrix4.rotationZ(-8 * pi / 180);
     // transformConfig.translate(-10.0);
     return Scaffold(
@@ -23,6 +24,7 @@ class AuthScreen extends StatelessWidget {
           Container(
             decoration: BoxDecoration(
               gradient: LinearGradient(
+                // TODO kolory do pliku z kolorami
                 colors: [
                   Color.fromRGBO(215, 117, 255, 1).withOpacity(0.5),
                   Color.fromRGBO(255, 188, 117, 1).withOpacity(0.9),
@@ -102,6 +104,7 @@ class _AuthCardState extends State<AuthCard>
     'email': '',
     'password': '',
   };
+  // TODO smierdzi
   var _isLoading = false;
   final _passwordController = TextEditingController();
   AnimationController _controller;
@@ -154,6 +157,7 @@ class _AuthCardState extends State<AuthCard>
       return;
     }
     _formKey.currentState.save();
+    // TODO arrow ladniejszy 
     setState(() {
       _isLoading = true;
     });
@@ -172,7 +176,9 @@ class _AuthCardState extends State<AuthCard>
         );
       }
     } on HttpException catch (error) {
+            // TODO smierdzi varem
       var errorMessage = 'Authentication failed!';
+      // TODO To ladnie by w Enumie wygladalo
       if (error.toString().contains('EMAIL_EXISTS')) {
         errorMessage = 'This email address is already in use.';
       } else if (error.toString().contains('INVALID_EMAIL')) {
@@ -190,12 +196,14 @@ class _AuthCardState extends State<AuthCard>
           'Could not authenticate you. Please try again later.';
       _showErrorDialog(errorMessage);
     }
+    // TODO arrow
     setState(() {
       _isLoading = false;
     });
   }
 
   void _switchAuthMode() {
+    // TODO arrowy na set state :) 
     if (_authMode == AuthMode.Login) {
       setState(() {
         _authMode = AuthMode.Signup;

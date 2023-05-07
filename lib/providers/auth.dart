@@ -8,11 +8,13 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../models/http_exception.dart';
 
 class Auth with ChangeNotifier {
+  // TODO staraj sie korzystac z modyfikatorow final, late, const
   String _token;
   DateTime _expiryDate;
   String _userId;
   Timer _authTimer;
 
+  // TODO takie rzeczy robimy typowo arrowami, duzo lepiej wygladaja :)
   bool get isAuth {
     return _token != null;
   }
@@ -26,12 +28,15 @@ class Auth with ChangeNotifier {
     return null;
   }
 
+  // TODO tez arrow
   String get userId {
     return _userId;
   }
 
+  
   Future<void> _authenticate(
       String email, String password, String urlSegment) async {
+        // TODO takie linki trzymaj w const na gorze pliku a klucze w .env
     final url = Uri.parse(
         'https://identitytoolkit.googleapis.com/v1/accounts:$urlSegment?key=AIzaSyCQhI1k47oSv7zOQb0VwbVlaA7FSTWOlu0');
     try {
@@ -71,7 +76,8 @@ class Auth with ChangeNotifier {
       throw error;
     }
   }
-
+  
+  
   Future<void> signup(String email, String password) async {
     return _authenticate(email, password, 'signUp');
   }

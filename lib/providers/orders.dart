@@ -31,6 +31,7 @@ class Orders with ChangeNotifier {
   }
 
   Future<void> fetchAndSetOrders() async {
+    // TODO tak jak poprzednio, na gorze np const BASE_LINK = https://flutter-update-43996-default-rtdb.europe-west1.firebasedatabase.app
     final url = Uri.parse(
         'https://flutter-update-43996-default-rtdb.europe-west1.firebasedatabase.app/orders/$userId.json?auth=$authToken');
     final response = await http.get(url);
@@ -63,6 +64,7 @@ class Orders with ChangeNotifier {
   }
 
   Future<void> addOrder(List<CartItem> cartProducts, double total) async {
+    // TODO i wlasnie dlatego jak dasz raz na gorze to nie powtarzasz :)
     final url = Uri.parse(
         'https://flutter-update-43996-default-rtdb.europe-west1.firebasedatabase.app/orders/$userId.jsonn?auth=$authToken');
     final timestamp = DateTime.now();
