@@ -1,4 +1,5 @@
 import 'dart:convert';
+
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 
@@ -11,11 +12,11 @@ class Product with ChangeNotifier {
   bool isFavorite;
 
   Product({
-    @required this.id,
-    @required this.title,
-    @required this.description,
-    @required this.price,
-    @required this.imageUrl,
+    required this.id,
+    required this.title,
+    required this.description,
+    required this.price,
+    required this.imageUrl,
     this.isFavorite = false,
   });
 
@@ -25,11 +26,10 @@ class Product with ChangeNotifier {
   }
 
   Future<void> toggleFavoriteStatus(String token, String userId) async {
-    // TODO teoretycznie jak masz boola ta zmienna jest zbedna bo mozesz w 40 i 43 dawac isFavourite! i uzyskasz ten sam efekt 
+    // TODO teoretycznie jak masz boola ta zmienna jest zbedna bo mozesz w 40 i 43 dawac isFavourite! i uzyskasz ten sam efekt
     final oldStatus = isFavorite;
     isFavorite = !isFavorite;
     // TODO jestes pewny ze odpalasz to w dobrym miejscu a nie po api callu?
-    notifyListeners();
     // TODO jak wczesniej
     final url = Uri.parse(
         'https://flutter-update-43996-default-rtdb.europe-west1.firebasedatabase.app/userFavorites/$userId/$id.json?auth=$token');
@@ -44,5 +44,6 @@ class Product with ChangeNotifier {
     } catch (error) {
       _setFavValue(oldStatus);
     }
+    notifyListeners();
   }
 }

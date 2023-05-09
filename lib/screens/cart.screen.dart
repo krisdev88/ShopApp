@@ -35,12 +35,16 @@ class CartScreen extends StatelessWidget {
                     label: Text(
                       '\$${cart.totalAmount.toStringAsFixed(2)}',
                       style: TextStyle(
-                          color: Theme.of(context)
+                          color: Theme
+                              .of(context)
                               .primaryTextTheme
                               .titleMedium
                               .color),
                     ),
-                    backgroundColor: Theme.of(context).colorScheme.primary,
+                    backgroundColor: Theme
+                        .of(context)
+                        .colorScheme
+                        .primary,
                   ),
                   OrderButton(cart: cart)
                 ],
@@ -51,7 +55,8 @@ class CartScreen extends StatelessWidget {
           Expanded(
               child: ListView.builder(
                   itemCount: cart.items.length,
-                  itemBuilder: (ctx, i) => CartItem(
+                  itemBuilder: (ctx, i) =>
+                      CartItem(
                         cart.items.values.toList()[i].id,
                         cart.items.keys.toList()[i],
                         cart.items.values.toList()[i].price,
@@ -67,7 +72,7 @@ class CartScreen extends StatelessWidget {
 class OrderButton extends StatefulWidget {
   const OrderButton({
     Key key,
-    @required this.cart,
+    required this.cart,
   }) : super(key: key);
 
   final Cart cart;
@@ -77,8 +82,7 @@ class OrderButton extends StatefulWidget {
 }
 
 class _OrderButtonState extends State<OrderButton> {
-  // TODO smierdzi xd
-  var _isLoading = false;
+  bool _isLoading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -87,19 +91,18 @@ class _OrderButtonState extends State<OrderButton> {
       onPressed: (widget.cart.totalAmount <= 0 || _isLoading)
           ? null
           : () async {
-            // TODO arrow my friend :)
-              setState(() {
-                _isLoading = true;
-              });
-              await Provider.of<Orders>(context, listen: false).addOrder(
-                widget.cart.items.values.toList(),
-                widget.cart.totalAmount,
-              );
-              setState(() {
-                _isLoading = false;
-              });
-              widget.cart.clear();
-            },
+        setState(() =>
+        _isLoading = true;
+        );
+        await Provider.of<Orders>(context, listen: false).addOrder(
+          widget.cart.items.values.toList(),
+          widget.cart.totalAmount,
+        );
+        setState(() =>
+          _isLoading = false;
+        };
+        widget.cart.clear();
+      },
     );
   }
 }

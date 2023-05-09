@@ -1,23 +1,26 @@
-import 'dart:convert';
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:flutter/widgets.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '';
 import '../models/http_exception.dart';
 
-class Auth with ChangeNotifier {
-  // TODO staraj sie korzystac z modyfikatorow final, late, const
-  String _token;
-  DateTime _expiryDate;
-  String _userId;
-  Timer _authTimer;
+final String key = dotenv.env['FIREBASE_KEY'];
 
-  // TODO takie rzeczy robimy typowo arrowami, duzo lepiej wygladaja :)
-  bool get isAuth {
-    return _token != null;
-  }
+class Auth with ChangeNotifier {
+  final String _token;
+  final DateTime _expiryDate;
+  final String _userId;
+  final Timer _authTimer;
+
+  const FIREBASE_LINK = Uri.parse(
+      'https://identitytoolkit.googleapis.com/v1/accounts:$urlSegment?key=key');
+
+  bool get isAuth => _token != null;
 
   String get token {
     if (_expiryDate != null &&
@@ -28,17 +31,11 @@ class Auth with ChangeNotifier {
     return null;
   }
 
-  // TODO tez arrow
-  String get userId {
-    return _userId;
-  }
+  String get userId => _userId;
 
-  
   Future<void> _authenticate(
       String email, String password, String urlSegment) async {
-        // TODO takie linki trzymaj w const na gorze pliku a klucze w .env
-    final url = Uri.parse(
-        'https://identitytoolkit.googleapis.com/v1/accounts:$urlSegment?key=AIzaSyCQhI1k47oSv7zOQb0VwbVlaA7FSTWOlu0');
+    final url = FIREBASE_LINK;
     try {
       final response = await http.post(
         url,
@@ -76,8 +73,7 @@ class Auth with ChangeNotifier {
       throw error;
     }
   }
-  
-  
+
   Future<void> signup(String email, String password) async {
     return _authenticate(email, password, 'signUp');
   }
@@ -116,7 +112,6 @@ class Auth with ChangeNotifier {
     }
     notifyListeners();
     final prefs = await SharedPreferences.getInstance();
-    // prefs.remove('userData');
     prefs.clear();
   }
 

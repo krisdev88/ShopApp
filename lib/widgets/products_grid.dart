@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../providers/products.dart';
 import './product_item.dart';
+import '../providers/products.dart';
 
 class ProductsGrid extends StatelessWidget {
   final bool showFavs;
@@ -16,14 +16,8 @@ class ProductsGrid extends StatelessWidget {
     return GridView.builder(
       padding: const EdgeInsets.all(10.0),
       itemBuilder: (ctx, i) => ChangeNotifierProvider.value(
-        // create: (c) => products[i],
         value: products[i],
-        // TODO pusty item jest sens tworzyc?
-        child: ProductItem(
-            // products[i].id,
-            // products[i].title,
-            // products[i].imageUrl,
-            ),
+        child: ProductItem(),
       ),
       itemCount: products.length,
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(

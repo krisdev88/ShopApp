@@ -12,10 +12,10 @@ class OrderItem {
   final DateTime dateTime;
 
   OrderItem({
-    @required this.id,
-    @required this.amount,
-    @required this.products,
-    @required this.dateTime,
+    required this.id,
+    required this.amount,
+    required this.products,
+    required this.dateTime,
   });
 }
 
@@ -26,14 +26,15 @@ class Orders with ChangeNotifier {
 
   Orders(this.authToken, this.userId, this._orders);
 
+  const BASE_LINK = Uri.parse(
+      'https://flutter-update-43996-default-rtdb.europe-west1.firebasedatabase.app/orders/$userId.json?auth=$authToken');
+
   List<OrderItem> get orders {
     return [..._orders];
   }
 
   Future<void> fetchAndSetOrders() async {
-    // TODO tak jak poprzednio, na gorze np const BASE_LINK = https://flutter-update-43996-default-rtdb.europe-west1.firebasedatabase.app
-    final url = Uri.parse(
-        'https://flutter-update-43996-default-rtdb.europe-west1.firebasedatabase.app/orders/$userId.json?auth=$authToken');
+    final url = BASE_LINK;
     final response = await http.get(url);
     final List<OrderItem> loadedOrders = [];
     final extractedDate = json.decode(response.body) as Map<String, dynamic>;
@@ -64,9 +65,7 @@ class Orders with ChangeNotifier {
   }
 
   Future<void> addOrder(List<CartItem> cartProducts, double total) async {
-    // TODO i wlasnie dlatego jak dasz raz na gorze to nie powtarzasz :)
-    final url = Uri.parse(
-        'https://flutter-update-43996-default-rtdb.europe-west1.firebasedatabase.app/orders/$userId.jsonn?auth=$authToken');
+    final url = BASE_LINK;
     final timestamp = DateTime.now();
     final response = await http.post(
       url,
