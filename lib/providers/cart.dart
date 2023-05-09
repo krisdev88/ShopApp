@@ -3,7 +3,7 @@ import 'package:flutter/foundation.dart';
 class CartItem {
   final String id;
   final String title;
-  final int quantity;
+  late final int quantity;
   final double price;
 
   CartItem({
@@ -23,12 +23,10 @@ class Cart with ChangeNotifier {
 
   int get itemCount => _items.length;
 
-
   double get totalAmount {
     double total = 0.0;
-    _items.forEach((key, cartItem) =>
-      total += cartItem.price * cartItem.quantity;
-    )
+    _items.forEach(
+        (key, cartItem) => total += cartItem.price * cartItem.quantity);
     return total;
   }
 
@@ -36,24 +34,22 @@ class Cart with ChangeNotifier {
     if (_items.containsKey(productId)) {
       _items.update(
         productId,
-            (existingCartItem) =>
-            CartItem(
-              id: existingCartItem.id,
-              title: existingCartItem.title,
-              price: existingCartItem.price,
-              quantity: existingCartItem.quantity + 1,
-            ),
+        (existingCartItem) => CartItem(
+          id: existingCartItem.id,
+          title: existingCartItem.title,
+          price: existingCartItem.price,
+          quantity: existingCartItem.quantity + 1,
+        ),
       );
     } else {
       _items.putIfAbsent(
         productId,
-            () =>
-            CartItem(
-              id: DateTime.now().toString(),
-              title: title,
-              price: price,
-              quantity: 1,
-            ),
+        () => CartItem(
+          id: DateTime.now().toString(),
+          title: title,
+          price: price,
+          quantity: 1,
+        ),
       );
     }
     notifyListeners();
@@ -68,16 +64,21 @@ class Cart with ChangeNotifier {
     if (!_items.containsKey(productId)) {
       return;
     }
-    if (_items[productId].quantity > 1) {
-      // TODO tworzenie nowej instancji CartItem zeby zmienic ilosc nie jeste dobrym pomyslem :) postaraj sie zmienic te wartosc w istniejacym obiekcie, oszczedzaj pamiec uzytkownikow :D
-      _items.update(
-          productId,
-              (existingCartItem) =>
-              CartItem(
-                  id: existingCartItem.id,
-                  title: existingCartItem.title,
-                  quantity: existingCartItem.quantity - 1,
-                  price: existingCartItem.price));
+    if (_items[productId]!.quantity > 1) {
+      // _items.update(
+          // productId,
+          // (existingCartItem) =>
+          // {
+          //   existingCartItem..quantity = existingCartItem..quantity-1;
+          //   return  existingCartItem;
+          // }
+              // CartItem(
+              // id: existingCartItem.id,
+              // title: existingCartItem.title,
+              // quantity: existingCartItem.quantity - 1,
+              // price: existingCartItem.price),
+      // );
+      _items[productId]!.quantity -= 1;
     } else {
       _items.remove(productId);
     }

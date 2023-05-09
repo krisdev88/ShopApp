@@ -8,7 +8,7 @@ import '../models/http_exception.dart';
 
 class Products with ChangeNotifier {
   List<Product> _items = [];
-  const String FIREBASE_LINK =
+  static const String FIREBASE_LINK =
       'https://flutter-update-43996-default-rtdb.europe-west1.firebasedatabase.app/';
 
   final String authToken;
@@ -25,19 +25,18 @@ class Products with ChangeNotifier {
 
   Future<void> fetchAndSetProducts([bool filterByUser = false]) async {
     final filterString =
-    filterByUser ? 'orderBy="creatorId"&equalTo="$userId"' : '';
-    // TODO doklej ten & do tego wyzej :) Bo tak na koncu linku zawsze zostaje
+        filterByUser ? 'orderBy="creatorId"&equalTo="$userId"' : '';
 
-    String url =
-    Uri.parse('$FIREBASE_LINK$products.json?auth=$authToken&$filterString');
+    Uri urlMain = Uri.parse(
+        '$FIREBASE_LINK + products.json?auth=$authToken&$filterString');
     try {
-      final response = await http.get(url);
+      final response = await http.get(urlMain);
       final extractedData = json.decode(response.body) as Map<String, dynamic>;
       if (extractedData == null) {
         return;
       }
-      url = Uri.parse(
-          '$FIREBASE_LINK$userFavorites/$userId.json?auth=$authToken');
+      Uri url = Uri.parse(
+          '$FIREBASE_LINK + userFavorites/$userId.json?auth=$authToken');
       final favoriteResponse = await http.get(url);
       final favoriteData = json.decode(favoriteResponse.body);
       final List<Product> loadedProducts = [];
@@ -48,7 +47,7 @@ class Products with ChangeNotifier {
           description: prodData['description'],
           price: prodData['price'],
           isFavorite:
-          favoriteData == null ? false : favoriteData[prodId] ?? false,
+              favoriteData == null ? false : favoriteData[prodId] ?? false,
           imageUrl: prodData['imageUrl'],
         ));
       });
@@ -60,7 +59,7 @@ class Products with ChangeNotifier {
   }
 
   Future<void> addProduct(Product product) async {
-    final url = Uri.parse('$FIREBASE_LINK$products.json?auth=$authToken');
+    final url = Uri.parse('$FIREBASE_LINK + products.json?auth=$authToken');
     try {
       final response = await http.post(
         url,
@@ -90,7 +89,8 @@ class Products with ChangeNotifier {
   Future<void> updateProduct(String id, Product newProduct) async {
     final prodIndex = _items.indexWhere((prod) => prod.id == id);
     if (prodIndex >= 0) {
-      final url = Uri.parse('$FIREBASE_LINK$products/$id.json?auth=$authToken');
+      final url =
+          Uri.parse('$FIREBASE_LINK + products/$id.json?auth=$authToken');
       await http.patch(url,
           body: json.encode({
             'title': newProduct.title,
@@ -106,9 +106,9 @@ class Products with ChangeNotifier {
   }
 
   Future<void> deleteProduct(String id) async {
-    final url = Uri.parse('$FIREBASE_LINK$products/$id.json?auth=$authToken');
+    final url = Uri.parse('$FIREBASE_LINK + products/$id.json?auth=$authToken');
     final existingProductIndex = _items.indexWhere((prod) => prod.id == id);
-    final Product existingProduct = _items[existingProductIndex];
+    Product? existingProduct = _items[existingProductIndex];
     _items.removeAt(existingProductIndex);
     notifyListeners();
 

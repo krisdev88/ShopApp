@@ -9,33 +9,33 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '';
 import '../models/http_exception.dart';
 
-final String key = dotenv.env['FIREBASE_KEY'];
+final String? key = dotenv.env['FIREBASE_KEY'];
 
 class Auth with ChangeNotifier {
-  final String _token;
-  final DateTime _expiryDate;
-  final String _userId;
-  final Timer _authTimer;
+  late String? _token;
+  late DateTime? _expiryDate;
+  late String? _userId;
+  late Timer? _authTimer;
 
-  const FIREBASE_LINK = Uri.parse(
-      'https://identitytoolkit.googleapis.com/v1/accounts:$urlSegment?key=key');
+  static const FIREBASE_LINK =
+      'https://identitytoolkit.googleapis.com/v1/accounts:';
 
   bool get isAuth => _token != null;
 
-  String get token {
+  String? get token {
     if (_expiryDate != null &&
-        _expiryDate.isAfter(DateTime.now()) &&
+        _expiryDate!.isAfter(DateTime.now()) &&
         _token != null) {
       return _token;
     }
     return null;
   }
 
-  String get userId => _userId;
+  String? get userId => _userId;
 
   Future<void> _authenticate(
       String email, String password, String urlSegment) async {
-    final url = FIREBASE_LINK;
+    final url = Uri.parse('$FIREBASE_LINK$urlSegment?key=key');
     try {
       final response = await http.post(
         url,
@@ -65,7 +65,7 @@ class Auth with ChangeNotifier {
         {
           'token': _token,
           'userId': _userId,
-          'expiryDate': _expiryDate.toIso8601String(),
+          'expiryDate': _expiryDate!.toIso8601String(),
         },
       );
       prefs.setString('userData', userData);
@@ -88,14 +88,15 @@ class Auth with ChangeNotifier {
       return false;
     }
     final extractedUserData =
-        json.decode(prefs.getString('userData')) as Map<String, Object>;
-    final expiryDate = DateTime.parse(extractedUserData['expiryDate']);
+        json.decode(prefs.getString('userData')!) as Map<String, Object>;
+    final expiryDate =
+        DateTime.parse(extractedUserData['expiryDate'] as String);
 
     if (expiryDate.isBefore(DateTime.now())) {
       return false;
     }
-    _token = extractedUserData['token'];
-    _userId = extractedUserData['userId'];
+    _token = extractedUserData['token'] as String;
+    _userId = extractedUserData['userId'] as String;
     _expiryDate = expiryDate;
     notifyListeners();
     _autoLogout();
@@ -107,7 +108,7 @@ class Auth with ChangeNotifier {
     _userId = null;
     _expiryDate = null;
     if (_authTimer != null) {
-      _authTimer.cancel();
+      _authTimer!.cancel();
       _authTimer = null;
     }
     notifyListeners();
@@ -117,9 +118,9 @@ class Auth with ChangeNotifier {
 
   void _autoLogout() {
     if (_authTimer != null) {
-      _authTimer.cancel();
+      _authTimer!.cancel();
     }
-    final timeToExpiry = _expiryDate.difference(DateTime.now()).inSeconds;
+    final timeToExpiry = _expiryDate!.difference(DateTime.now()).inSeconds;
     _authTimer = Timer(Duration(seconds: timeToExpiry), logout);
   }
 }

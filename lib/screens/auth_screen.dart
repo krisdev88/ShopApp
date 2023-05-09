@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../colors.dart';
 import '../providers/auth.dart';
 import '../models/http_exception.dart';
 
@@ -22,10 +23,9 @@ class AuthScreen extends StatelessWidget {
           Container(
             decoration: BoxDecoration(
               gradient: LinearGradient(
-                // TODO kolory do pliku z kolorami
                 colors: [
-                  Color.fromRGBO(215, 117, 255, 1).withOpacity(0.5),
-                  Color.fromRGBO(255, 188, 117, 1).withOpacity(0.9),
+                  CustomColors.sexyPink.withOpacity(0.5),
+                  CustomColors.creamOrange.withOpacity(0.9),
                 ],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
@@ -88,7 +88,7 @@ class AuthScreen extends StatelessWidget {
 
 class AuthCard extends StatefulWidget {
   const AuthCard({
-    Key key,
+    Key? key,
   }) : super(key: key);
 
   @override
@@ -105,9 +105,9 @@ class _AuthCardState extends State<AuthCard>
   };
   bool _isLoading = false;
   final _passwordController = TextEditingController();
-  AnimationController _controller;
-  Animation<Offset> _slideAnimation;
-  Animation<double> _opacityAnimation;
+  late AnimationController _controller;
+  late Animation<Offset> _slideAnimation;
+  late Animation<double> _opacityAnimation;
 
   @override
   void initState() {
@@ -151,24 +151,24 @@ class _AuthCardState extends State<AuthCard>
   }
 
   Future<void> _submit() async {
-    if (!_formKey.currentState.validate()) {
+    if (!_formKey.currentState!.validate()) {
       return;
     }
-    _formKey.currentState.save();
-    setState(() => _isLoading = true;
+    _formKey.currentState!.save();
+    setState(() => _isLoading = true
     );
     try {
       if (_authMode == AuthMode.Login) {
         // Log user in
         await Provider.of<Auth>(context, listen: false).login(
-          _authData['email'],
-          _authData['password'],
+          _authData['email']!,
+          _authData['password']!,
         );
       } else {
         // Sign user up
         await Provider.of<Auth>(context, listen: false).signup(
-          _authData['email'],
-          _authData['password'],
+          _authData['email']!,
+          _authData['password']!,
         );
       }
     } on HttpException catch (error) {
@@ -191,19 +191,19 @@ class _AuthCardState extends State<AuthCard>
           'Could not authenticate you. Please try again later.';
       _showErrorDialog(errorMessage);
     }
-    setState(() => _isLoading = false;
+    setState(() => _isLoading = false
     );
   }
 
   void _switchAuthMode() {
     if (_authMode == AuthMode.Login) {
       setState(() =>
-      _authMode = AuthMode.Signup;
+      _authMode = AuthMode.Signup
       );
       _controller.forward();
     } else {
       setState(() =>
-      _authMode = AuthMode.Login;
+      _authMode = AuthMode.Login
       );
       _controller.reverse();
     }
@@ -238,13 +238,13 @@ class _AuthCardState extends State<AuthCard>
                   keyboardType: TextInputType.emailAddress,
                   validator: (value) {
                     // TODO do walidacji uzywaj Regexa
-                    if (value.isEmpty || !value.contains('@')) {
+                    if (value!.isEmpty || !value.contains('@')) {
                       return 'Invalid email!';
                     }
                     return null;
                   },
                   onSaved: (value) {
-                    _authData['email'] = value;
+                    _authData['email'] = value!;
                   },
                 ),
                 TextFormField(
