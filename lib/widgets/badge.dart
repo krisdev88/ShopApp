@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-class Badge extends StatelessWidget {
-  const Badge({
+class BadgeNew extends StatelessWidget {
+  const BadgeNew({
     Key key,
     @required this.child,
     @required this.value,
