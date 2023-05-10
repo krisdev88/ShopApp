@@ -65,19 +65,6 @@ class Cart with ChangeNotifier {
       return;
     }
     if (_items[productId]!.quantity > 1) {
-      // _items.update(
-          // productId,
-          // (existingCartItem) =>
-          // {
-          //   existingCartItem..quantity = existingCartItem..quantity-1;
-          //   return  existingCartItem;
-          // }
-              // CartItem(
-              // id: existingCartItem.id,
-              // title: existingCartItem.title,
-              // quantity: existingCartItem.quantity - 1,
-              // price: existingCartItem.price),
-      // );
       _items[productId]!.quantity -= 1;
     } else {
       _items.remove(productId);

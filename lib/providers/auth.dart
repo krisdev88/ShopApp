@@ -6,13 +6,12 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '';
 import '../models/http_exception.dart';
 
 final String? key = dotenv.env['FIREBASE_KEY'];
 
 class Auth with ChangeNotifier {
-  late String? _token;
+  String? _token;
   late DateTime? _expiryDate;
   late String? _userId;
   late Timer? _authTimer;
@@ -35,7 +34,7 @@ class Auth with ChangeNotifier {
 
   Future<void> _authenticate(
       String email, String password, String urlSegment) async {
-    final url = Uri.parse('$FIREBASE_LINK$urlSegment?key=key');
+    final url = Uri.parse('$FIREBASE_LINK$urlSegment?key=$key');
     try {
       final response = await http.post(
         url,

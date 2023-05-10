@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 import '../providers/products.dart';
 import '../widgets/app_drawer.dart';
 import '../widgets/products_grid.dart';
-import '../widgets/badge.dart';
+import '../widgets/badge_new.dart';
 import '../providers/cart.dart';
 import './cart.screen.dart';
 
@@ -32,11 +32,11 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
   void didChangeDependencies() {
     if (_inInit) {
       setState(() =>
-      _isLoading = true;
+      _isLoading = true
       );
       Provider.of<Products>(context).fetchAndSetProducts().then((_) {
         setState(() =>
-        _isLoading = false;
+        _isLoading = false
         );
       });
     }
@@ -75,8 +75,8 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
           ),
           Consumer<Cart>(
             builder: (_, cart, ch) =>
-                Badge(
-                  child: ch,
+                BadgeNew(
+                  child: ch!,
                   value: cart.itemCount.toString(),
                 ),
             child: IconButton(

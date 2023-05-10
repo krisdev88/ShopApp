@@ -11,8 +11,8 @@ class Products with ChangeNotifier {
   static const String FIREBASE_LINK =
       'https://flutter-update-43996-default-rtdb.europe-west1.firebasedatabase.app/';
 
-  final String authToken;
-  final String userId;
+  final String? authToken;
+  final String? userId;
 
   Products(this.authToken, this.userId, this._items);
 

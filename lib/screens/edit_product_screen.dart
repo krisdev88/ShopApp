@@ -1,8 +1,8 @@
-import 'dart:ffi';
-
 import 'package:flutter/material.dart';
+import 'package:flutter_complete_guide/providers/utils.dart';
 import 'package:provider/provider.dart';
 
+import '../messages.dart';
 import '../providers/product.dart';
 import '../providers/products.dart';
 
@@ -15,13 +15,13 @@ class EditProductScreen extends StatefulWidget {
 
 class _EditProductScreenState extends State<EditProductScreen> {
   final _priceFocusNode = FocusNode();
-  final _descriptionFocuseNode = FocusNode();
+  final _descriptionFocusNode = FocusNode();
   final _imageUrlController = TextEditingController();
   final _imageUrlFocusNode = FocusNode();
   final _form = GlobalKey<FormState>();
 
-  Map<String, dynamic> _editedProduct = Product(
-    id: null,
+  Product _editedProduct = Product(
+    id: '',
     title: '',
     price: 0,
     description: '',
@@ -45,16 +45,13 @@ class _EditProductScreenState extends State<EditProductScreen> {
   @override
   void didChangeDependencies() {
     if (_isInit) {
-      final productId = ModalRoute
-          .of(context)
-          .settings
-          .arguments as String;
+      final productId = ModalRoute.of(context)!.settings.arguments as String;
       if (productId != null) {
         _editedProduct =
             Provider.of<Products>(context, listen: false).findById(productId);
         _initValues = {
           'title': _editedProduct.title,
-          'description': _editedProduct.description,
+          'description': _editedProduct.description as String,
           'price': _editedProduct.price.toString(),
           'imageUrl': '',
         };
@@ -69,7 +66,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
   void dispose() {
     _imageUrlFocusNode.removeListener(_updateImageUrl);
     _priceFocusNode.dispose();
-    _descriptionFocuseNode.dispose();
+    _descriptionFocusNode.dispose();
     _imageUrlController.dispose();
     _imageUrlFocusNode.dispose();
     super.dispose();
@@ -79,25 +76,24 @@ class _EditProductScreenState extends State<EditProductScreen> {
     // TODO to jest bardzo nieczytelne, przemysl to czy nie ma lepszego sposobu
     if (!_imageUrlFocusNode.hasFocus) {
       if ((!_imageUrlController.text.startsWith('http') &&
-          !_imageUrlController.text.startsWith('https')) ||
+              !_imageUrlController.text.startsWith('https')) ||
           (!_imageUrlController.text.endsWith('.png') &&
               !_imageUrlController.text.endsWith('.jpg') &&
               !_imageUrlController.text.endsWith('.jpeg'))) {
         return;
       }
+
       setState(() {});
     }
   }
 
   Future<void> _saveForm() async {
-    final isValid = _form.currentState.validate();
+    final isValid = _form.currentState!.validate();
     if (!isValid) {
       return;
     }
-    _form.currentState.save();
-    setState(() =>
-    _isLoading = true;
-    );
+    _form.currentState!.save();
+    setState(() => _isLoading = true);
     if (_editedProduct.id != null) {
       await Provider.of<Products>(
         context,
@@ -113,33 +109,38 @@ class _EditProductScreenState extends State<EditProductScreen> {
         ).addProduct(_editedProduct);
       } catch (error) {
         await showDialog(
-            context: context,
-            builder: (ctx) =>
-                AlertDialog(
-                    title: Text('An error occurred!'),
-                    content: Text('Something went wrong!'),
-                    actions: <Widget>[
-                    TextButton(
-
-                    onPressed: () =>
-            Navigator.of(ctx).pop();
-        child:
-        Text('Okay')
-    )
-    ],
-    ),
-    );
-    }
-    // finally {
-    //   setState(() {
-    //     _isLoading = false;
-    //   });
-    //   Navigator.of(context).pop();
-    // }
+          context: context,
+          builder: (ctx) => AlertDialog(
+            title: Text('An error occurred!'),
+            content: Text('Something went wrong!'),
+            actions: <Widget>[
+              TextButton(
+                  onPressed: () => Navigator.of(ctx).pop(), child: Text('Okay'))
+            ],
+          ),
+        );
+      }
+      // finally {
+      //   setState(() {
+      //     _isLoading = false;
+      //   });
+      //   Navigator.of(context).pop();
+      // }
     }
 
-    setState(() => _isLoading = false;);
-    }
+    setState(() => _isLoading = false);
+  }
+
+  String? fileNameValidator(String? value) {
+    if (value!.isEmpty) return 'Please enter an image URL.';
+
+    if (!CustomUtils.validatePrefixIsHttpOrHttps(value))
+      return 'Please enter a valid Url.';
+
+    if (!CustomUtils.validateFormatIsPngOrJpgOrJpeg(value))
+      return 'Please enter a valid image URL.';
+    return null;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -155,175 +156,111 @@ class _EditProductScreenState extends State<EditProductScreen> {
       ),
       body: _isLoading
           ? Center(
-        child: CircularProgressIndicator(),
-      )
+              child: CircularProgressIndicator(),
+            )
           : Padding(
-        padding: const EdgeInsets.all(15.0),
-        child: Form(
-          key: _form,
-          child: ListView(
-            children: <Widget>[
-              TextFormField(
-                initialValue: _initValues['title'],
-                decoration: const InputDecoration(labelText: 'Title'),
-                textInputAction: TextInputAction.next,
-                onFieldSubmitted: (_) =>
-                    FocusScope.of(context).requestFocus(_priceFocusNode)
-                ,
-                onSaved: (value) {
-                  // TODO tworzysz nowa instancje by zmienic tytul, duzo lepiej zmienic na istniejacej instacji editedProduct
-                  _editedProduct = Product(
-                    title: value,
-                    price: _editedProduct.price,
-                    description: _editedProduct.description,
-                    imageUrl: _editedProduct.imageUrl,
-                    id: _editedProduct.id,
-                    isFavorite: _editedProduct.isFavorite,
-                  );
-                },
-                validator: (value) {
-                  // TODO inline to misiu pisz :) niepotrzebnie kod sie rozwleka przez to i brak funkcj strzalkowych
-                  if (value.isEmpty) => 'Please provide a value.' ?? null;
-                },
-              ),
-              TextFormField(
-                initialValue: _initValues['price'],
-                decoration: const InputDecoration(labelText: 'Price'),
-                textInputAction: TextInputAction.next,
-                keyboardType: TextInputType.number,
-                focusNode: _priceFocusNode,
-                onFieldSubmitted: (_) =>
-                    FocusScope.of(context)
-                        .requestFocus(_descriptionFocuseNode)
-                ,
-                onSaved: (value) {
-                  // TODO jak wyzej, tym razem tworzyc nowa instancje by zmienic cene
-                  _editedProduct = Product(
-                    title: _editedProduct.title,
-                    price: double.parse(value),
-                    description: _editedProduct.description,
-                    imageUrl: _editedProduct.imageUrl,
-                    id: _editedProduct.id,
-                    isFavorite: _editedProduct.isFavorite,
-                  );
-                },
-                validator: (value) {
-                  // TODO w takich przypadkach tez bym raczej enuma zrobil i tam trzymal wszystkie mozliwe opisy bledow,
-                  // czyli robisz enum priceErrors i robisz mape wartosci np 'EMPTY' = 'Please enter a price"
-                  // Duzo czytelniejeszy kod wtedy jest, latwiej edytowalny i bardziej spojny
-                  if (value.isEmpty) {
-                    return 'Pleace enter a price.';
-                  }
-                  if (double.tryParse(value) == null) {
-                    return 'Pleace enter a valid number.';
-                  }
-                  if (double.parse(value) <= 0) {
-                    return 'Please enter a number greater than zero.';
-                  }
-                  return null;
-                },
-              ),
-              TextFormField(
-                initialValue: _initValues['description'],
-                decoration:
-                const InputDecoration(labelText: 'Description'),
-                maxLines: 3,
-                keyboardType: TextInputType.multiline,
-                focusNode: _descriptionFocuseNode,
-                validator: (value) {
-                  if (value.isEmpty) {
-                    return 'Please enter a description.';
-                  }
-                  if (value.length < 10) {
-                    return 'Should be at least 10 characters long.';
-                  }
-                  return null;
-                },
-                onSaved: (value) {
-                  // TODO niepotrzebnie tworzona instancja
-                  _editedProduct = Product(
-                    title: _editedProduct.title,
-                    price: _editedProduct.price,
-                    description: value,
-                    imageUrl: _editedProduct.imageUrl,
-                    id: _editedProduct.id,
-                    isFavorite: _editedProduct.isFavorite,
-                  );
-                },
-              ),
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: <Widget>[
-                  Container(
-                    width: 100,
-                    height: 100,
-                    margin: EdgeInsets.only(
-                      top: 8,
-                      right: 10,
-                    ),
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        width: 1,
-                        color: Colors.grey,
-                      ),
-                    ),
-                    child: _imageUrlController.text.isEmpty
-                        ? Text(
-                      'Enter a URL',
-                    )
-                        : FittedBox(
-                      child: Image.network(
-                        _imageUrlController.text,
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                  ),
-                  Expanded(
-                    child: TextFormField(
-                      decoration: InputDecoration(labelText: 'Image URL'),
-                      keyboardType: TextInputType.url,
-                      textInputAction: TextInputAction.done,
-                      controller: _imageUrlController,
-                      focusNode: _imageUrlFocusNode,
+              padding: const EdgeInsets.all(15.0),
+              child: Form(
+                key: _form,
+                child: ListView(
+                  children: <Widget>[
+                    TextFormField(
+                      initialValue: _initValues['title'],
+                      decoration: const InputDecoration(labelText: 'Title'),
+                      textInputAction: TextInputAction.next,
                       onFieldSubmitted: (_) =>
-                          _saveForm()
-                      ,
+                          FocusScope.of(context).requestFocus(_priceFocusNode),
+                      onSaved: (value) => _editedProduct.title = value!,
+                      validator: (value) =>
+                          value!.isEmpty ? 'Please provide a value' : null,
+                    ),
+                    TextFormField(
+                      initialValue: _initValues['price'],
+                      decoration: const InputDecoration(labelText: 'Price'),
+                      textInputAction: TextInputAction.next,
+                      keyboardType: TextInputType.number,
+                      focusNode: _priceFocusNode,
+                      onFieldSubmitted: (_) => FocusScope.of(context)
+                          .requestFocus(_descriptionFocusNode),
+                      onSaved: (value) =>
+                          _editedProduct.price = value as double,
                       validator: (value) {
-                        if (value.isEmpty) {
-                          return 'Please enter an image URL.';
+                        if (value!.isEmpty) {
+                          return Messages.emptyPrice;
                         }
-                        // TODO tu juz jest duzo duzo ladniej niz chwile wczesniej :D moze warto to przekopiowac w tamto miesjce?
-                        // A skoro mozesz przekopiowac to moze od razu warto napisac medote zeby nie powtarzac dwa razy kodu?
-                        if (!value.startsWith('http') &&
-                            !value.startsWith('htpps')) {
-                          return 'Please enter a valid Url.';
+                        if (double.tryParse(value) == null) {
+                          return Messages.validPrice;
                         }
-                        if (!value.endsWith('.png') &&
-                            !value.endsWith('.jpg') &&
-                            !value.endsWith('.jpeg')) {
-                          return 'Please enter a valid image URL.';
+                        if (double.parse(value) <= 0) {
+                          return Messages.greaterZeroPrice;
                         }
                         return null;
                       },
-                      onSaved: (value) {
-                        // TODO zbedna nowa instancja
-                        _editedProduct = Product(
-                          title: _editedProduct.title,
-                          price: _editedProduct.price,
-                          description: _editedProduct.description,
-                          imageUrl: value,
-                          id: _editedProduct.id,
-                          isFavorite: _editedProduct.isFavorite,
-                        );
-                      },
                     ),
-                  ),
-                ],
-              )
-            ],
-          ),
-        ),
-      ),
+                    TextFormField(
+                      initialValue: _initValues['description'],
+                      decoration:
+                          const InputDecoration(labelText: 'Description'),
+                      maxLines: 3,
+                      keyboardType: TextInputType.multiline,
+                      focusNode: _descriptionFocusNode,
+                      validator: (value) {
+                        if (value!.isEmpty)
+                          return 'Please enter a description.';
+
+                        if (value.length < 10)
+                          return 'Should be at least 10 characters long.';
+
+                        return null;
+                      },
+                      onSaved: (value) => _editedProduct.description = value,
+                    ),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: <Widget>[
+                        Container(
+                          width: 100,
+                          height: 100,
+                          margin: EdgeInsets.only(
+                            top: 8,
+                            right: 10,
+                          ),
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                              width: 1,
+                              color: Colors.grey,
+                            ),
+                          ),
+                          child: _imageUrlController.text.isEmpty
+                              ? Text(
+                                  'Enter a URL',
+                                )
+                              : FittedBox(
+                                  child: Image.network(
+                                    _imageUrlController.text,
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                        ),
+                        Expanded(
+                          child: TextFormField(
+                            decoration: InputDecoration(labelText: 'Image URL'),
+                            keyboardType: TextInputType.url,
+                            textInputAction: TextInputAction.done,
+                            controller: _imageUrlController,
+                            focusNode: _imageUrlFocusNode,
+                            onFieldSubmitted: (_) => _saveForm(),
+                            validator: fileNameValidator,
+                            onSaved: (value) =>
+                                _editedProduct.imageUrl = value!,
+                          ),
+                        ),
+                      ],
+                    )
+                  ],
+                ),
+              ),
+            ),
     );
   }
 }

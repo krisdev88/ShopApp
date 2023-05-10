@@ -5,10 +5,10 @@ import 'package:http/http.dart' as http;
 
 class Product with ChangeNotifier {
   final String id;
-  final String title;
-  final String description;
-  final double price;
-  final String imageUrl;
+  late final String title;
+  late final String? description;
+  late final double price;
+  late final String imageUrl;
   bool isFavorite;
 
   Product({
@@ -26,23 +26,20 @@ class Product with ChangeNotifier {
   }
 
   Future<void> toggleFavoriteStatus(String token, String userId) async {
-    // TODO teoretycznie jak masz boola ta zmienna jest zbedna bo mozesz w 40 i 43 dawac isFavourite! i uzyskasz ten sam efekt
-    final oldStatus = isFavorite;
-    isFavorite = !isFavorite;
-    // TODO jestes pewny ze odpalasz to w dobrym miejscu a nie po api callu?
-    // TODO jak wczesniej
-    final url = Uri.parse(
-        'https://flutter-update-43996-default-rtdb.europe-west1.firebasedatabase.app/userFavorites/$userId/$id.json?auth=$token');
+    const String FIREBASE_LINK = 'https://flutter-update-43996-default-rtdb.europe-west1.firebasedatabase.app/userFavorites';
+    // final oldStatus = isFavorite;
+    // isFavorite = !isFavorite;
+    final url = Uri.parse('$FIREBASE_LINK/$userId/$id.json?auth=$token');
     try {
       final response = await http.put(
         url,
-        body: json.encode(isFavorite),
+        body: json.encode(!isFavorite),
       );
       if (response.statusCode >= 400) {
-        _setFavValue(oldStatus);
+        _setFavValue(isFavorite);
       }
     } catch (error) {
-      _setFavValue(oldStatus);
+      _setFavValue(isFavorite);
     }
     notifyListeners();
   }

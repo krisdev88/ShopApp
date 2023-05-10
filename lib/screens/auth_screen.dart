@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../colors.dart';
+import '../messages.dart';
 import '../providers/auth.dart';
 import '../models/http_exception.dart';
 
@@ -173,17 +174,16 @@ class _AuthCardState extends State<AuthCard>
       }
     } on HttpException catch (error) {
       String errorMessage = 'Authentication failed!';
-      // TODO To ladnie by w Enumie wygladalo
       if (error.toString().contains('EMAIL_EXISTS')) {
-        errorMessage = 'This email address is already in use.';
+        errorMessage = Messages.emailExists;
       } else if (error.toString().contains('INVALID_EMAIL')) {
-        errorMessage = 'This is not a valid email address.';
+        errorMessage = Messages.invalidEmail;
       } else if (error.toString().contains('WEAK_PASSWORD')) {
-        errorMessage = 'This passwors is too weak';
+        errorMessage = Messages.weakPassword;
       } else if (error.toString().contains('EMAIL_NOT_FOUND')) {
-        errorMessage = 'Could not find a user with that email.';
+        errorMessage = Messages.emailNotFound;
       } else if (error.toString().contains('INVALID_PASSWORD')) {
-        errorMessage = 'Invalid password';
+        errorMessage = Messages.invalidPassword;
       }
       _showErrorDialog(errorMessage);
     } catch (error) {
@@ -253,13 +253,13 @@ class _AuthCardState extends State<AuthCard>
                   controller: _passwordController,
                   validator: (value) {
                     // TODO rowniez tutaj regex bylby spoko
-                    if (value.isEmpty || value.length < 5) {
+                    if (value!.isEmpty || value.length < 5) {
                       return 'Password is too short!';
                     }
                     return null;
                   },
                   onSaved: (value) {
-                    _authData['password'] = value;
+                    _authData['password'] = value!;
                   },
                 ),
                 AnimatedContainer(
