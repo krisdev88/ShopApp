@@ -2,20 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../providers/auth.dart';
-import '../screens/product_detail_screen.dart';
-import '../providers/product.dart';
 import '../providers/cart.dart';
+import '../providers/product.dart';
+import '../screens/product_detail_screen.dart';
 
 class ProductItem extends StatelessWidget {
-  // final String id;
-  // final String title;
-  // final String imageUrl;
-
-  // ProductItem(
-  //   this.id,
-  //   this.title,
-  //   this.imageUrl,
-  // );
+  ProductItem();
 
   @override
   Widget build(BuildContext context) {
@@ -26,15 +18,19 @@ class ProductItem extends StatelessWidget {
       borderRadius: BorderRadius.circular(10),
       child: GridTile(
         child: GestureDetector(
-          onTap: () {
+          onTap: () =>
             Navigator.of(context).pushNamed(
               ProductDetailScreen.routeName,
               arguments: product.id,
-            );
-          },
-          child: Image.network(
-            product.imageUrl,
-            fit: BoxFit.cover,
+            )
+          ,
+          child: Hero(
+            tag: product.id,
+            child: FadeInImage(
+              placeholder: AssetImage('assets/images/product-placeholder.png'),
+              image: NetworkImage(product.imageUrl),
+              fit: BoxFit.cover,
+            ),
           ),
         ),
         footer: GridTileBar(
@@ -44,12 +40,12 @@ class ProductItem extends StatelessWidget {
               icon: Icon(
                 product.isFavorite ? Icons.favorite : Icons.favorite_border,
               ),
-              onPressed: () {
+              onPressed: () =>
                 product.toggleFavoriteStatus(
-                  authData.token,
-                  authData.userId,
-                );
-              },
+                  authData.token as String,
+                  authData.userId as String,
+                )
+              ,
               color: Theme.of(context).colorScheme.secondary,
             ),
           ),
@@ -74,9 +70,9 @@ class ProductItem extends StatelessWidget {
                   duration: Duration(seconds: 2),
                   action: SnackBarAction(
                     label: 'UNDO',
-                    onPressed: () {
-                      cart.removeItem(product.id);
-                    },
+                    onPressed: () =>
+                      cart.removeItem(product.id)
+                    ,
                   ),
                 ),
               );
