@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_complete_guide/colors.dart';
 
 class BadgeNew extends StatelessWidget {
-  const BadgeNew({
-    Key key,
-    @required this.child,
-    @required this.value,
-    this.color,
-  }) : super(key: key);
+  BadgeNew({
+    Key? key,
+
+    required this.child,
+    required this.value,
+    this.color = CustomColors.creamOrange,
+  }
+) : super(key: key);
 
   final Widget child;
   final String value;

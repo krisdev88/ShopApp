@@ -4,15 +4,12 @@ import 'package:provider/provider.dart';
 import '../providers/products.dart';
 
 class ProductDetailScreen extends StatelessWidget {
-  // final String title;
-
-  // ProductDetailScreen(this.title);
   static const routeName = '/product-detail';
 
   @override
   Widget build(BuildContext context) {
     final productId =
-        ModalRoute.of(context).settings.arguments as String; // is the id
+        ModalRoute.of(context)!.settings.arguments as String; // is the id
     final loadedProduct = Provider.of<Products>(
       context,
       listen: false,
@@ -54,7 +51,7 @@ class ProductDetailScreen extends StatelessWidget {
                   padding: EdgeInsets.symmetric(horizontal: 10),
                   width: double.infinity,
                   child: Text(
-                    loadedProduct.description,
+                    loadedProduct.description as String,
                     textAlign: TextAlign.center,
                     softWrap: true,
                   ),

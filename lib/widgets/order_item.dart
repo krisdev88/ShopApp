@@ -15,7 +15,7 @@ class OrderItem extends StatefulWidget {
 }
 
 class _OrderItemState extends State<OrderItem> {
-  var _expanded = false;
+  bool _expanded = false;
 
   @override
   Widget build(BuildContext context) {
@@ -34,11 +34,7 @@ class _OrderItemState extends State<OrderItem> {
               ),
               trailing: IconButton(
                 icon: Icon(_expanded ? Icons.expand_less : Icons.expand_more),
-                onPressed: () {
-                  setState(() {
-                    _expanded = !_expanded;
-                  });
-                },
+                onPressed: () => setState(() => _expanded = !_expanded),
               ),
             ),
             if (_expanded)

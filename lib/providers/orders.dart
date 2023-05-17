@@ -12,27 +12,29 @@ class OrderItem {
   final DateTime dateTime;
 
   OrderItem({
-    @required this.id,
-    @required this.amount,
-    @required this.products,
-    @required this.dateTime,
+    required this.id,
+    required this.amount,
+    required this.products,
+    required this.dateTime,
   });
 }
 
 class Orders with ChangeNotifier {
   List<OrderItem> _orders = [];
-  final String authToken;
-  final String userId;
+  final String? authToken;
+  final String? userId;
 
   Orders(this.authToken, this.userId, this._orders);
+
+  static const BASE_LINK =
+      'https://flutter-update-43996-default-rtdb.europe-west1.firebasedatabase.app/orders/';
 
   List<OrderItem> get orders {
     return [..._orders];
   }
 
   Future<void> fetchAndSetOrders() async {
-    final url = Uri.parse(
-        'https://flutter-update-43996-default-rtdb.europe-west1.firebasedatabase.app/orders/$userId.json?auth=$authToken');
+    final url = Uri.parse('$BASE_LINK$userId.json?auth=$authToken');
     final response = await http.get(url);
     final List<OrderItem> loadedOrders = [];
     final extractedDate = json.decode(response.body) as Map<String, dynamic>;
@@ -63,8 +65,7 @@ class Orders with ChangeNotifier {
   }
 
   Future<void> addOrder(List<CartItem> cartProducts, double total) async {
-    final url = Uri.parse(
-        'https://flutter-update-43996-default-rtdb.europe-west1.firebasedatabase.app/orders/$userId.jsonn?auth=$authToken');
+    final url = Uri.parse('$BASE_LINK$userId.json?auth=$authToken');
     final timestamp = DateTime.now();
     final response = await http.post(
       url,

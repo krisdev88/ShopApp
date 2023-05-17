@@ -4,8 +4,7 @@ import 'package:provider/provider.dart';
 import '../providers/products.dart';
 import '../widgets/app_drawer.dart';
 import '../widgets/products_grid.dart';
-import '../widgets/badge.dart';
-
+import '../widgets/badge_new.dart';
 import '../providers/cart.dart';
 import './cart.screen.dart';
 
@@ -20,30 +19,25 @@ class ProductsOverviewScreen extends StatefulWidget {
 }
 
 class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
-  var _showOnlyFavorites = false;
-  var _inInit = true;
-  var _isLoading = false;
+  bool _showOnlyFavorites = false;
+  bool _inInit = true;
+  bool _isLoading = false;
 
   @override
-  void initState() {
-    // Provider.of<Products>(context).fetchAndSetProducts(); //this won't work!
-    // Future.delayed(Duration.zero).then((_) {
-    //   Provider.of<Products>(context).fetchAndSetProducts();
-    // });
+  void initState() =>
+      super.initState();
 
-    super.initState();
-  }
 
   @override
   void didChangeDependencies() {
     if (_inInit) {
-      setState(() {
-        _isLoading = true;
-      });
+      setState(() =>
+      _isLoading = true
+      );
       Provider.of<Products>(context).fetchAndSetProducts().then((_) {
-        setState(() {
-          _isLoading = false;
-        });
+        setState(() =>
+        _isLoading = false
+        );
       });
     }
     _inInit = false;
@@ -67,7 +61,8 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
               });
             },
             icon: Icon(Icons.more_vert),
-            itemBuilder: (_) => [
+            itemBuilder: (_) =>
+            [
               PopupMenuItem(
                 child: Text('Only Favorites'),
                 value: FilterOptions.Favorites,
@@ -79,10 +74,11 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
             ],
           ),
           Consumer<Cart>(
-            builder: (_, cart, ch) => BadgeNew(
-              child: ch,
-              value: cart.itemCount.toString(),
-            ),
+            builder: (_, cart, ch) =>
+                BadgeNew(
+                  child: ch!,
+                  value: cart.itemCount.toString(),
+                ),
             child: IconButton(
               icon: Icon(Icons.shopping_cart),
               onPressed: () {
@@ -95,8 +91,8 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
       drawer: AppDrawer(),
       body: _isLoading
           ? Center(
-              child: CircularProgressIndicator(),
-            )
+        child: CircularProgressIndicator(),
+      )
           : ProductsGrid(_showOnlyFavorites),
     );
   }
