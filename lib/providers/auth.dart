@@ -103,7 +103,6 @@ class Auth with ChangeNotifier {
   }
 
   Future<void> logout() async {
-    print('cycki');
     _token = null;
     _userId = null;
     _expiryDate = null;
@@ -117,7 +116,7 @@ class Auth with ChangeNotifier {
   }
 
   void _autoLogout() {
-    print('luj');
+
     if (_authTimer != null) {
       _authTimer!.cancel();
     }

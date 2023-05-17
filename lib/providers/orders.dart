@@ -7,7 +7,7 @@ import './cart.dart';
 
 class OrderItem {
   final String id;
-  final String amount;
+  final double amount;
   final List<CartItem> products;
   final DateTime dateTime;
 
@@ -42,23 +42,24 @@ class Orders with ChangeNotifier {
       return;
     }
     extractedDate.forEach((orderId, orderData) {
-      loadedOrders.add(
-        OrderItem(
+      List<CartItem> cartItems = [];
+      List<dynamic> random = (orderData['products'] as List<dynamic>);
+      random.forEach((element) {
+        CartItem cartItem = CartItem(
+          id: element['id'],
+          title: element['title'],
+          quantity: element['quantity'],
+          price: element['price'],
+        );
+        cartItems.add(cartItem);
+      });
+
+      OrderItem orderItem = OrderItem(
           id: orderId,
           amount: orderData['amount'],
           dateTime: DateTime.parse(orderData['dateTime']),
-          products: (orderData['products'] as List<dynamic>)
-              .map(
-                (item) => CartItem(
-                  id: item['id'],
-                  price: item['price'],
-                  quantity: item['quantity'],
-                  title: item['title'],
-                ),
-              )
-              .toList(),
-        ),
-      );
+          products: cartItems);
+      loadedOrders.add(orderItem);
     });
     _orders = loadedOrders.reversed.toList();
     notifyListeners();
@@ -86,7 +87,7 @@ class Orders with ChangeNotifier {
         0,
         OrderItem(
           id: json.decode(response.body)['name'],
-          amount: total.toString(),
+          amount: total,
           products: cartProducts,
           dateTime: timestamp,
         ));
