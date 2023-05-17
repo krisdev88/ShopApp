@@ -14,7 +14,7 @@ class Auth with ChangeNotifier {
   String? _token;
   late DateTime? _expiryDate;
   late String? _userId;
-  late Timer? _authTimer;
+  Timer? _authTimer;
 
   static const FIREBASE_LINK =
       'https://identitytoolkit.googleapis.com/v1/accounts:';
@@ -116,6 +116,7 @@ class Auth with ChangeNotifier {
   }
 
   void _autoLogout() {
+
     if (_authTimer != null) {
       _authTimer!.cancel();
     }
